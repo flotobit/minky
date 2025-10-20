@@ -7,8 +7,24 @@ document.getElementById('applyBtn').addEventListener('click', async () => {
     return;
   }
 
+  const cheatCode = `
+    (function() {
+      if (typeof bananas === 'number') bananas += ${bananas};
+      if (typeof pumpkins === 'number') pumpkins += ${pumpkins};
+      if (typeof saveAndUpdate === 'function') saveAndUpdate();
+      alert('Added ${bananas} bananas and ${pumpkins} pumpkins!');
+    })();
+  `;
+
   const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-  chrome.tabs.sendMessage(tab.id, { type: 'applyCheats', payload: { bananas, pumpkins } }, (response) => {
-    console.log('Cheat injection response:', response);
+  chrome.scripting.executeScript({
+    target: { tabId: tab.id },
+    func: (code) => {
+      const script = document.createElement('script');
+      script.textContent = code;
+      (document.head || document.documentElement).appendChild(script);
+      script.remove();
+    },
+    args: [cheatCode],
   });
 });
