@@ -1,33 +1,24 @@
-const panel = document.createElement('div');
-panel.style.position = 'fixed';
-panel.style.top = '10px';
-panel.style.right = '10px';
-panel.style.backgroundColor = 'rgba(0,0,0,0.8)';
-panel.style.color = 'white';
-panel.style.padding = '10px';
-panel.style.zIndex = '9999';
-panel.innerHTML = `
-  <input id="bananasInput" type="number" placeholder="Bananas" />
-  <button id="addBananasBtn">Add Bananas</button>
-  <input id="pumpkinsInput" type="number" placeholder="Pumpkins" />
-  <button id="addPumpkinsBtn">Add Pumpkins</button>
-`;
-document.body.appendChild(panel);
+function injectCheatScript(code) {
+  const script = document.createElement('script');
+  script.textContent = code;
+  (document.head || document.documentElement).appendChild(script);
+  script.remove();
+}
 
-document.getElementById('addBananasBtn').onclick = () => {
-  const amt = parseInt(document.getElementById('bananasInput').value);
-  if (!isNaN(amt)) {
-    window.bananas += amt;
-    window.saveAndUpdate && window.saveAndUpdate();
-    alert('Added ' + amt + ' bananas');
+// Listen for messages from popup.js
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+  if (request.type === 'applyCheats') {
+    const { bananas, pumpkins } = request.payload;
+    const code = `
+      (function() {
+        if (typeof bananas === 'number') bananas += ${bananas};
+        if (typeof pumpkins === 'number') pumpkins += ${pumpkins};
+        if (typeof saveAndUpdate === 'function') saveAndUpdate();
+        alert('Cheats applied: +${bananas} bananas, +${pumpkins} pumpkins');
+      })();
+    `;
+    injectCheatScript(code);
+    sendResponse({ status: 'done' });
   }
-};
-
-document.getElementById('addPumpkinsBtn').onclick = () => {
-  const amt = parseInt(document.getElementById('pumpkinsInput').value);
-  if (!isNaN(amt)) {
-    window.pumpkins += amt;
-    window.saveAndUpdate && window.saveAndUpdate();
-    alert('Added ' + amt + ' pumpkins');
-  }
-};
+  return true; // Keep channel open for async response
+});
