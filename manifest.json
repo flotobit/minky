@@ -2,18 +2,10 @@
   "manifest_version": 3,
   "name": "Minky Clicker Cheats",
   "version": "1.0",
-  "description": "Add bananas and pumpkins easily.",
-  "permissions": [
-    "scripting",
-    "activeTab"
-  ],
+  "description": "Add bananas and pumpkins cheat panel",
+  "permissions": ["scripting", "activeTab"],
   "action": {
     "default_popup": "popup.html"
-  },
-  "content_scripts": [
-    {
-      "matches": ["https://minkyclicker.com/*"],
-      "js": ["content.js"]
-    }
-  ]
+  }
 }
+
