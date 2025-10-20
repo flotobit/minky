@@ -1,18 +1,20 @@
 document.getElementById('applyBtn').addEventListener('click', async () => {
-  const bananas = parseInt(document.getElementById('bananaInput').value) || 0;
-  const pumpkins = parseInt(document.getElementById('pumpkinInput').value) || 0;
+  const bananasToAdd = parseInt(document.getElementById('bananaInput').value) || 0;
+  const pumpkinsToAdd = parseInt(document.getElementById('pumpkinInput').value) || 0;
 
-  if (bananas <= 0 && pumpkins <= 0) {
+  if (bananasToAdd <= 0 && pumpkinsToAdd <= 0) {
     alert('Please enter a positive number for bananas or pumpkins.');
     return;
   }
 
   const cheatCode = `
     (function() {
-      if (typeof bananas === 'number') bananas += ${bananas};
-      if (typeof pumpkins === 'number') pumpkins += ${pumpkins};
+      if (typeof bananas === 'number') bananas += ${bananasToAdd};
+      if (typeof pumpkins === 'number') pumpkins += ${pumpkinsToAdd};
+      if (typeof bananasPerClick === 'number') bananasPerClick += ${bananasToAdd};
+      if (typeof pumpkinsPerClick === 'number') pumpkinsPerClick += ${pumpkinsToAdd};
       if (typeof saveAndUpdate === 'function') saveAndUpdate();
-      alert('Added ${bananas} bananas and ${pumpkins} pumpkins!');
+      alert('Added ${bananasToAdd} bananas and ${pumpkinsToAdd} pumpkins!');
     })();
   `;
 
